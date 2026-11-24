@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Philippines Bingo 菲律賓賓果</title>
+<style>
+*{box-sizing:border-box}
+:root{--ink:#22284a;--mute:#6b7396;--red:#e63956;--blue:#1e6fe0;--pur:#7c4dff;--line:#d5dbf0}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Trebuchet MS","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;background:linear-gradient(135deg,#fff4d6,#ffe1ec 45%,#d9ecff) fixed}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 22px}
+h1{margin:0;font-size:clamp(1.4rem,3vw,2.4rem);background:linear-gradient(90deg,#ef476f,#f78c1f,#06b56b,#118ab2,#7c4dff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 small{font-size:.55em}
+button{font:inherit;cursor:pointer}
+.tools,.row,.tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:0;border-radius:99px;padding:9px 16px;font-weight:700;background:#fff;color:var(--ink);box-shadow:0 3px 0 #0002}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.on,.tabs .on{background:var(--blue);color:#fff}
+.btn.big{background:#ff8a00;color:#fff}
+.tabs{padding:0 22px 8px}
+.tabs button{border:0;border-radius:12px 12px 0 0;padding:9px 18px;font-weight:700;background:#ffffffb0;color:var(--ink)}
+main{padding:0 22px 22px}
+.panel{background:#fffffff0;border-radius:20px;padding:16px;box-shadow:0 6px 0 #0001;margin-bottom:12px}
+.pane{display:none}.pane.on{display:block}
+.top{padding:10px 14px}
+.nums{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,62px));justify-content:center;gap:8px}
+.num{border:0;border-radius:12px;aspect-ratio:1;font-size:1.3rem;font-weight:900;color:#fff;box-shadow:0 4px 0 #0003;transition:transform .12s}
+.num:hover{transform:scale(1.1)}
+.num.used{background:#c9cfe3!important;box-shadow:none}
+.num.cur{outline:4px solid var(--ink);background:var(--ink)!important}
+.clue{background:#fff;border-radius:26px;border-top:16px solid var(--pur);padding:18px 30px;min-height:46vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 8px 0 #0001;margin-bottom:12px}
+.clue.culture{border-top-color:#1e6fe0}.clue.food{border-top-color:#e63956}.clue.hokkien{border-top-color:#7c4dff}
+.badge{display:inline-block;background:var(--ink);color:#fff;border-radius:99px;padding:5px 20px;font-weight:800;font-size:clamp(1rem,1.8vw,1.6rem)}
+.clue.culture .badge{background:#1e6fe0}.clue.food .badge{background:#e63956}.clue.hokkien .badge{background:#7c4dff}
+.q{font-size:clamp(1.6rem,min(4vw,6.5vh),4rem);font-weight:800;line-height:1.3;margin:18px 0;max-width:1400px}
+.v{border-radius:.25em;padding:0 .2em;font-weight:900}
+.vc{background:#d6e6ff;color:#1e5fc4}.vk{background:#ffdce3;color:#d4213f}.vm{background:#e6dcff;color:#6a35e6}
+.vK{color:#d4213f;font-weight:900;text-decoration:underline}.vM{color:#1e6fe0;font-weight:900;text-decoration:underline}
+.ans{font-size:clamp(2rem,min(5vw,8vh),5rem);font-weight:900;min-height:1.3em;animation:pop .4s}
+.ans.culture{color:#1e6fe0}.ans.food{color:#e63956}.ans.hokkien{color:#7c4dff}
+.ans small{font-size:.35em;color:var(--mute);margin-left:.3em}
+.ctr{justify-content:center}
+@keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.clue .btn{font-size:1.15rem;padding:12px 22px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:#eef1fb;border-radius:8px;padding:2px 9px;font-size:.85rem}
+.chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:4px 10px;margin:8px 0}
+.grid{display:grid;gap:7px;grid-template-columns:repeat(var(--n),1fr);max-width:min(640px,62vh);margin:0 auto}
+.pc .grid{max-width:640px}
+.pc .cell b.big{font-size:clamp(.8rem,1.9vw,1.25rem)}.pc .cell b.zhw{font-size:clamp(1.1rem,2.8vw,1.8rem)}.pc .cell small{font-size:.6rem}
+.cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3px;border:3px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);overflow:hidden;word-break:break-word;line-height:1.15;transition:transform .1s}
+.cell:hover{transform:scale(1.04)}
+.cell b{font-size:clamp(.75rem,1.6vw,1.1rem)}
+.s5 .cell b{font-size:clamp(.62rem,1.2vw,.9rem)}
+.cell i{font-style:normal;color:var(--pur);font-weight:800}
+.cell small{color:var(--mute);font-size:.7rem;margin-top:2px}
+.cell b.big{font-size:clamp(.85rem,min(3.8vw,3.2vh),1.7rem);word-break:normal;overflow-wrap:normal}
+.cell .n{display:flex;align-items:center;justify-content:center;width:62%;aspect-ratio:1;border-radius:50%;color:#fff;font-weight:900;font-size:clamp(1.3rem,3.4vw,2.4rem);box-shadow:0 3px 0 #0003}
+.cell.on .n{outline:4px solid var(--red);outline-offset:2px}
+.muted{color:var(--mute)}
+.cell.on{background:#ffd23f;border-color:var(--red)}
+.cell.on small{color:var(--ink)}
+.nozh .zh{display:none}
+#win{display:none;text-align:center;font-size:2.4rem;font-weight:900;color:var(--red);animation:pop .5s}
+#sheet{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pc{break-inside:avoid;border:1px dashed #999;border-radius:10px;padding:8px}
+input[type=text]{width:100%;font:inherit;padding:6px;border-radius:8px;border:1px solid var(--line)}
+@media print{.pc .cell b.big{font-size:13pt!important}.pc .cell b.zhw{font-size:20pt!important}.pc .cell small{font-size:7pt!important}.pc .grid{max-width:none}header,.tabs,.noprint{display:none!important}body{background:#fff}.panel{box-shadow:none}.cell{border-color:#999}.cell .n{background:#fff!important;color:#000;border:3px solid #000;box-shadow:none}}
+</style></head>
+<body>
+<header class="noprint">
+ <h1>🇵🇭 Philippines Bingo <small>菲律賓賓果</small></h1>
+ <div class="tools">
+  <button class="btn on" id="tSfx">🔊 Sound 音效</button>
+  <button class="btn" id="tMus">🎵 Music 音樂</button>
+  <button class="btn on" id="tZh">中文 On</button>
+  <button class="btn" id="tSet">🔗 Student link 學生連結</button>
+  <button class="btn" id="tFs">⛶ Full screen</button>
+ </div>
+</header>
+<main>
+<div class="panel noprint" id="setup" style="display:none">
+ <h2>How to play 遊戲方法</h2>
+ <ol><li>Pick a number on the screen: <b>“Number ___, please!”</b></li><li>Answer the question.</li><li>Mark the <b>answer</b> if it is on your card.</li><li>3 in a row? Say <b>“Bingo!”</b> and read your line.</li></ol>
+ <button class="btn on" id="mkLink">Get student link 學生連結</button>
+ <input type="text" id="linkOut" readonly style="display:none;margin-top:8px">
+ <p class="muted">Students open this link on their devices and get their own random card. 學生開啟連結即可取得自己的賓果卡。</p>
+</div>
+</main>
+<div class="tabs noprint">
+ <button data-t="caller" class="on">🎯 Teacher 老師</button>
+ <button data-t="card">🎫 My card 學生卡</button>
+ <button data-t="print">🖨 Print 列印</button>
+</div>
+<main>
+<section class="pane on" id="caller">
+ <div class="panel top">
+  <h2>Pick a number! 選一個號碼 <span class="muted" id="prog"></span></h2>
+  <div class="nums" id="nums"></div>
+ </div>
+ <aside class="clue" id="clue">
+  <div id="badge"><span class="badge">Ready? 準備好了嗎？</span></div>
+  <div class="q" id="q">Choose a number to start. 選一個號碼開始。</div>
+  <div class="ans" id="ans"></div>
+  <div class="row ctr" style="margin-top:14px">
+   <button class="btn big" id="rv">Show answer 顯示答案</button>
+   <button class="btn" id="nx">🎲 Random 隨機</button>
+   <button class="btn" id="sp">🔊 Read</button>
+   <button class="btn" id="rs">↺ Restart</button>
+  </div>
+ </aside>
+ <div class="panel"><span class="muted">Already called 已叫過:</span><div class="chips" id="hist"></div></div>
+</section>
+<section class="pane panel" id="card">
+ <div class="row noprint"><button class="btn big" id="nc">New card 換一張</button>
+ <span class="muted">Tap a square when you hear the answer. 聽到答案就點一下。3 in a row wins! 連成一線就賓果！</span></div>
+ <div id="win">🎉 BINGO! Read your line! 🎉</div>
+ <div id="myCard" style="margin-top:10px"></div>
+</section>
+<section class="pane panel" id="print">
+ <div class="row noprint"><button class="btn big" id="mk">Make 8 new cards 產生8張</button>
+ <button class="btn on" onclick="window.print()">Print 列印</button></div>
+ <div id="sheet"></div>
+</section>
+</main>
+
+<script>
+/* number, category, question (with {x|highlight}), 問題, answer, pinyin */
+const D=[
+[1,"culture","How do you say “{c|thank you}” politely?","要怎麼有禮貌地說「謝謝」？","Salamat po!",""],
+[2,"culture","How do you say “{c|yes}” politely?","要怎麼有禮貌地說「是」？","Opo!",""],
+[3,"culture","When we do {c|mano po}, we ask the elder for their ___.","做 mano po 的時候，我們請求長輩的___。","Blessing",""],
+[4,"culture","What is the {c|star lantern} Filipinos hang at Christmas?","菲律賓人聖誕節掛的星星燈籠叫什麼？","Parol",""],
+[5,"culture","When do Philippine malls start {c|Christmas}?","菲律賓的購物中心幾月開始過聖誕節？","September",""],
+[6,"hokkien","Which {m|Hokkien} word does “{k|siopao}” (steamed bun) come from?","「Siopao」來自哪個閩南語詞？","燒包","shāobāo"],
+[7,"hokkien","Which {m|Hokkien} word does “{k|taho}” (tofu pudding) come from?","「Taho」來自哪個閩南語詞？","豆花","dòuhuā"],
+[8,"hokkien","Which {m|Hokkien} word does “{k|tikoy}” (sticky rice cake) come from?","「Tikoy」來自哪個閩南語詞？","甜粿","tiánguǒ"],
+[9,"hokkien","Which {m|Hokkien} word does “{k|bihon}” (rice noodles) come from?","「Bihon」來自哪個閩南語詞？","米粉","mǐfěn"],
+[10,"hokkien","{k|Siopao} comes from Hokkien. What does “{m|sio}” mean?","「燒包」的「燒」是什麼意思？","Hot",""],
+[11,"food","{k|Tikoy} is sticky. It means the ___ sticks together.","Tikoy 黏黏的，代表___緊緊在一起。","Family",""],
+[12,"food","We eat {k|bihon} on birthdays. Long noodles mean ___.","生日吃 bihon，長長的麵代表___。","Long life",""]];
+const CAT={culture:"Culture 文化",hokkien:"Hokkien 閩南語",food:"Food 美食"};
+const $=id=>document.getElementById(id);
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const COL=["#ef476f","#f78c1f","#e0a100","#06a463","#118ab2","#7c4dff","#e83e8c"];
+const ncol=n=>COL[(n-1)%COL.length];
+const isZh=t=>/[\u4e00-\u9fff]/.test(t);
+
+/* ---------- sound: everything is synthesized, no files needed ---------- */
+let AC=null,sfxOn=true,musOn=false,mt=null,st=0;
+try{sfxOn=localStorage.getItem("sfx")!="0";musOn=false}catch(e){}
+function ac(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!="running")AC.resume();return AC}
+/* iPad/iPhone: audio must be unlocked by a tap, and Web Audio is muted by the silent switch unless a media element is playing */
+let sil=null;
+function silentWav(){const n=4000,b=new Uint8Array(44+n),v=new DataView(b.buffer),w=(o,s)=>[...s].forEach((c,i)=>b[o+i]=c.charCodeAt(0));
+ w(0,"RIFF");v.setUint32(4,36+n,true);w(8,"WAVEfmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,"data");v.setUint32(40,n,true);b.fill(128,44);
+ return URL.createObjectURL(new Blob([b],{type:"audio/wav"}))}
+function unlock(){try{try{navigator.audioSession.type="playback"}catch(e){}
+ const a=ac();if(!sil){sil=new Audio(silentWav());sil.loop=true;sil.setAttribute("playsinline","")}
+ if(sil.paused)sil.play().catch(()=>{});
+ const s=a.createBufferSource();s.buffer=a.createBuffer(1,1,22050);s.connect(a.destination);s.start(0)}catch(e){}}
+["touchend","click"].forEach(ev=>document.addEventListener(ev,unlock,{passive:true}));
+function tone(f,d,type,v,delay,isMus){try{if(!isMus&&!sfxOn)return;const a=ac(),t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();
+ o.type=type||"sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||.15,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+ o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.05)}catch(e){}}
+const SFX={
+ pick(){tone(520,.1,"square",.09);tone(780,.14,"square",.09,.08)},
+ reveal(){tone(660,.15,"triangle",.18);tone(880,.15,"triangle",.18,.13);tone(1175,.3,"triangle",.18,.26)},
+ mark(){tone(700,.07,"triangle",.14)},
+ unmark(){tone(420,.07,"triangle",.12)},
+ reset(){tone(600,.12,"sawtooth",.07);tone(400,.12,"sawtooth",.07,.1);tone(250,.2,"sawtooth",.07,.2)},
+ bingo(){[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,.22,"square",.12,i*.12))}};
+const MEL=[523,587,659,784,659,587,523,392,440,523,587,659,587,523,440,392],BAS=[131,131,196,196,110,110,165,165];
+function musicStep(){tone(MEL[st%16],.22,"triangle",.05,0,true);if(st%2==0)tone(BAS[(st/2)%8],.4,"sine",.06,0,true);st++}
+function setMusic(on){musOn=on;$("tMus").classList.toggle("on",on);clearInterval(mt);if(on){try{ac()}catch(e){}mt=setInterval(musicStep,260)}}
+$("tSfx").onclick=()=>{sfxOn=!sfxOn;$("tSfx").classList.toggle("on",sfxOn);$("tSfx").textContent=sfxOn?"🔊 Sound 音效":"🔇 Sound 音效";try{localStorage.setItem("sfx",sfxOn?"1":"0")}catch(e){}if(sfxOn)SFX.mark()};
+$("tSfx").classList.toggle("on",sfxOn);if(!sfxOn)$("tSfx").textContent="🔇 Sound 音效";
+$("tMus").onclick=()=>setMusic(!musOn);
+$("tZh").onclick=()=>{const on=document.body.classList.toggle("nozh")==false;$("tZh").classList.toggle("on",on);$("tZh").textContent=on?"中文 On":"中文 Off"};
+$("tSet").onclick=()=>{const s=$("setup");s.style.display=s.style.display=="none"?"block":"none"};
+$("tFs").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+
+/* ---------- text ---------- */
+const html=t=>t.replace(/\{(\w)\|([^}]+)\}/g,(_,a,w)=>`<span class="v v${a}">${w}</span>`);
+const plain=t=>t.replace(/\{\w\|([^}]+)\}/g,"$1");
+
+/* ---------- student link ---------- */
+$("mkLink").onclick=()=>{const o=$("linkOut");o.style.display="block";o.value=location.href.split("#")[0]+"#card";o.select()};
+
+/* ---------- caller: numbers never shuffle, because they are on the cards ---------- */
+let used=[],cur=null,shown=false;
+function resetCaller(quiet){used=[];cur=null;shown=false;
+ $("nums").innerHTML=D.map(d=>`<button type="button" class="num" data-n="${d[0]}" style="background:${ncol(d[0])}">${d[0]}</button>`).join("");
+ if(!quiet)SFX.reset();drawCaller()}
+function pick(n){cur=D[n-1];shown=false;if(!used.includes(n))used.push(n);SFX.pick();drawCaller()}
+function drawCaller(){
+ $("prog").textContent=`(${used.length} / ${D.length})`;
+ document.querySelectorAll(".num").forEach(b=>{const n=+b.dataset.n;b.classList.toggle("used",used.includes(n));b.classList.toggle("cur",!!cur&&cur[0]===n)});
+ $("clue").className="clue"+(cur?" "+cur[1]:"");
+ $("badge").innerHTML=cur?`<span class="badge">#${cur[0]} · ${CAT[cur[1]]}</span>`:'<span class="badge">Ready? 準備好了嗎？</span>';
+ $("q").innerHTML=cur?`${html(cur[2])}<br><small class="zh" style="font-size:.5em;color:var(--mute)">${cur[3]}</small>`:"Choose a number to start.<br>選一個號碼開始。";
+ $("ans").className="ans "+(cur?cur[1]:"");$("ans").innerHTML=cur&&shown?`${cur[4]}${cur[5]?`<small>${cur[5]}</small>`:""}`:"";
+ $("hist").innerHTML=used.map(n=>D[n-1]).filter(d=>!(d===cur&&!shown)).map(d=>`<span class="chip">#${d[0]} ${d[4]}</span>`).join("")}
+$("nums").onclick=e=>{const b=e.target.closest(".num");if(b)pick(+b.dataset.n)};
+$("nx").onclick=()=>{const f=D.map(d=>d[0]).filter(n=>!used.includes(n));if(!f.length){$("q").textContent="All numbers used! 號碼都用完了！";return}pick(f[Math.floor(Math.random()*f.length)])};
+$("rv").onclick=()=>{if(cur){shown=true;SFX.reveal();drawCaller()}};
+$("rs").onclick=()=>resetCaller(false);
+$("sp").onclick=()=>{try{if(!cur)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain(cur[2]).replace("___","blank"));u.lang="en-US";u.rate=.85;speechSynthesis.speak(u)}catch(e){}};
+
+/* ---------- cards: 9 of the 13 answers, all different ---------- */
+function makeCard(){return{n:3,cells:shuf(D).slice(0,9).map(d=>({num:false,d}))}}
+function lines(n){const L=[];for(let r=0;r<n;r++){L.push([...Array(n)].map((_,c)=>r*n+c));L.push([...Array(n)].map((_,c)=>c*n+r))}
+ L.push([...Array(n)].map((_,i)=>i*n+i));L.push([...Array(n)].map((_,i)=>i*n+(n-1-i)));return L}
+function renderCard(c,host,live){
+ host.innerHTML="";const g=document.createElement("div");g.className="grid s"+c.n;g.style.setProperty("--n",c.n);
+ const marks=new Set();let won=false;
+ c.cells.forEach((x,i)=>{const b=document.createElement("button");b.type="button";b.className="cell";const d=x.d;
+  b.innerHTML=x.num?`<span class="n" style="background:${ncol(d[0])}">${d[0]}</span>`
+   :`<b class="big${isZh(d[4])?" zhw":""}">${d[4]}</b>${d[5]?`<small>${d[5]}</small>`:""}`;
+  if(live)b.onclick=()=>{b.classList.toggle("on");const on=b.classList.contains("on");on?marks.add(i):marks.delete(i);on?SFX.mark():SFX.unmark();
+   const w=lines(c.n).some(l=>l.every(k=>marks.has(k)));$("win").style.display=w?"block":"none";if(w&&!won)SFX.bingo();won=w};
+  g.appendChild(b)});
+ host.appendChild(g)}
+function newCard(quiet){$("win").style.display="none";renderCard(makeCard(),$("myCard"),true);if(!quiet)SFX.pick()}
+$("nc").onclick=()=>newCard(false);
+$("mk").onclick=()=>{const sh=$("sheet");sh.innerHTML="";const seen=new Set();let made=0,tries=0;
+ while(made<8&&tries<300){tries++;const c=makeCard(),key=c.cells.map(x=>(x.num?"n":"a")+x.d[0]).sort().join();if(seen.has(key))continue;seen.add(key);made++;
+  const d=document.createElement("div");d.className="pc";
+  d.innerHTML='<div style="margin-bottom:6px;font-weight:600">Name 姓名: ____________</div><div></div>';sh.appendChild(d);renderCard(c,d.lastChild,false)}};
+
+function tab(t){document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x.dataset.t==t));
+ document.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on",p.id==t))}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.t));
+resetCaller(true);newCard(true);
+if(location.hash=="#card")tab("card");
+</script></body></html>
